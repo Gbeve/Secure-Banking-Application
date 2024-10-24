@@ -1,0 +1,223 @@
+<html>
+<head>
+    <title>Secure Banking Application</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #ff7f50;
+            --dark: #333;
+            --light: #ffffff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--light);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--light);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .icon {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .otp-text {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <h1>Secure Banking App</h1>
+    <div id="registration-step">
+        <h2>Account Registration</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username" />
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password" />
+        </div>
+        <button onclick="register()">Register</button>
+    </div>
+
+    <div id="auth-step" class="hidden">
+        <h2>Choose Authentication Method</h2>
+        <button onclick="show2FA()">2FA (OTP)</button>
+        <button onclick="showBiometric()">Biometric</button>
+    </div>
+
+    <div id="otp-step" class="hidden">
+        <h2>Enter OTP</h2>
+        <div class="otp-text" id="otp-display">Generate your OTP...</div>
+        <div class="input-group">
+            <input type="text" id="otp-input" placeholder="Enter OTP" />
+        </div>
+        <button onclick="verifyOTP()">Verify OTP</button>
+    </div>
+
+    <div id="biometric-step" class="hidden">
+        <h2>Biometric Authentication</h2>
+        <div class="otp-text">Please use the webcam for biometric verification.</div>
+        <button onclick="biometricScan()">Scan Biometric</button>
+    </div>
+
+    <div id="account-step" class="hidden">
+        <h2>Account Details</h2>
+        <div class="input-group">
+            <input type="number" id="national-id" placeholder="National ID" />
+        </div>
+        <div class="input-group">
+            <input type="text" id="phone" placeholder="Phone Number" />
+        </div>
+        <button onclick="showAccountInfo()">Submit</button>
+    </div>
+
+    <div id="info-step" class="hidden">
+        <h2>Your Account Details</h2>
+        <p><strong>Total Account Balance:</strong> $10,000</p>
+        <p><strong>Bank Branch:</strong> Downtown Branch</p>
+        <p><strong>Name of Account:</strong> John Doe</p>
+        <p><strong>BSB:</strong> 123-456</p>
+        <p><strong>WBC:</strong> ABCD1234</p>
+        <div class="nav-buttons">
+            <span class="icon" onclick="goBack()">←</span>
+            <span class="icon" onclick="goForward()">→</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let otp = null;
+
+    function register() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username && password) {
+            // Simulate storing user data
+            document.getElementById('registration-step').classList.add('hidden');
+            document.getElementById('auth-step').classList.remove('hidden');
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function show2FA() {
+        otp = Math.floor(100000 + Math.random() * 900000).toString();
+        document.getElementById('otp-display').textContent = `Your OTP is: ${otp}`;
+        document.getElementById('auth-step').classList.add('hidden');
+        document.getElementById('otp-step').classList.remove('hidden');
+    }
+
+    function verifyOTP() {
+        const input = document.getElementById('otp-input').value;
+        if (input === otp) {
+            document.getElementById('otp-step').classList.add('hidden');
+            document.getElementById('account-step').classList.remove('hidden');
+        } else {
+            alert("Invalid OTP. Please try again.");
+        }
+    }
+
+    function showBiometric() {
+        document.getElementById('auth-step').classList.add('hidden');
+        document.getElementById('biometric-step').classList.remove('hidden');
+    }
+
+    function biometricScan() {
+        // Simulate a biometric scan
+        if (confirm("Biometric scan successful! Proceeding to account details.")) {
+            document.getElementById('biometric-step').classList.add('hidden');
+            document.getElementById('account-step').classList.remove('hidden');
+        }
+    }
+
+    function showAccountInfo() {
+        const nationalID = document.getElementById('national-id').value;
+        const phone = document.getElementById('phone').value;
+
+        if (nationalID && phone) {
+            document.getElementById('account-step').classList.add('hidden');
+            document.getElementById('info-step').classList.remove('hidden');
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function goBack() {
+        document.getElementById('info-step').classList.add('hidden');
+        document.getElementById('account-step').classList.remove('hidden');
+    }
+
+    function goForward() {
+        alert("Proceeding to the next steps...");
+        // Here you could add functionality for the next steps
+    }
+</script>
+
+</body>
+</html>
